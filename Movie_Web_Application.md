@@ -60,6 +60,29 @@
 
 - 로컬에서 merge 하는 방법으로 이 방법을 사용하면 a, b 둘 중 하나만 선택할 수도 있고 a, b 둘 다 선택할 수 있다 !  → 만약에 둘 다 merge 되는 것을 원한다면 로컬에서 merge !!
 
+- 순서
+
+  ```shell
+  # testA branch 생성
+  $ git branch testA
+  
+  # 해당 branch로 이동
+  $ git switch testA
+  
+  # 수정하고 add, commit
+  # push 할 때는 해당하는 곳에 push
+  $ git push origin testA
+  
+  # merge할 때는 master branch에서!!
+  $ git merge testA
+  # -> 충돌이 일어나서 그 부분을 보여줌 -> 두 개를 다 선택하려면 both ~ 선택 !
+  
+  # merge 성공 ! 다시 git, commit, push
+  # 로컬 branch 삭제
+  $ git branch -d testA
+  # 로컬에서만 삭제된 것이므로 Gitlab에서도 삭제를 해줘야한다.
+  ```
+
 #### :bulb: 해결한 후 branch 삭제 !
 
 - branch 삭제는 동기화가 되지 않기 때문에 각각의 위치에서 삭제해줘야한다. Local에서 merge하고 branch를 삭제했다면 Gitlab에서도 branch를 따로 삭제해줘야한다. 반대의 경우도 마찬가지로 로컬과 Gitlab에서 각각 삭제해줘야한다.
