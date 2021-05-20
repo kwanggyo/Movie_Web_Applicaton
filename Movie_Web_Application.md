@@ -20,11 +20,11 @@
 
 #### :orange: 오늘 한 것 !
 
-1. Framework 정하기
+1. **Framework 정하기**
 
-2. Front와 Back에 관련하여 역할 정하기
+2. **Front와 Back에 관련하여 역할 정하기**
 
-3. Django를 사용하여 community json으로 출력해보기 → 출력 실패,,
+3. **Django를 사용하여 community json으로 출력해보기 → 출력 실패,,**
    - 생각보다 Django를 많이 잊어버려서 공부가 필요하다는 것을 느꼈다. 
    - html 파일이 아닌 json 파일로 출력해야하기 때문에 `serializers`에 대한 공부 필요 !!
 
@@ -253,4 +253,109 @@
 - 가져오기는 했지만 이후의 작업을 생각한다면 API를 통해서 가져온 후 json으로 변환하여 사용해야될 것 같다. 
 
 → 팀원과 상의하면서 진행할 예정, 먼저 빠르게 필수적인 기능을 구현하고 바꿀 것 같다.
+
+### 4. Account 구현
+
+- 재우님이 맡아서 진행하셨고 api token을 받아오는 것과 signup 하는 부분을 구현하셨다.
+- 구현 후 같이 돌아가는 것을 확인하고 코드를 살펴보는 시간을 가졌다.
+
+### 5. Community 구현
+
+- 내가 맡아서 진행한 부분으로 serializers를 사용하여 데이터를 json으로 넘겨주는 것에 집중했다. ERD가 작성되어있었기 때문에 관계설정과 column을 정하는 것이 빠르게 해결됐다.
+
+- review 부분을 구현하면서 movie에 관한 review를 가져오려면 1:N 참조가 필요하다고 생각되었고 ERD에 추가했다. 또한 작성하면서 comment에 content가 빠진 것을 추가했다.
+
+- 작성을 하다보니 url이 겹치는 문제가 발생했고 `Restful API`를 생각해야 된다고 느꼈다.
+
+- review의 view를 작성하면서 movie의 참조에 대해서 좀 더 고민했고 리뷰 게시판을 따로 만들 것인지에 대해 토의해 보았다.
+
+  ##### 😮 토의 내용
+
+  - 리뷰 리스트를 만들지?
+    - 만들게 되면 홈페이지에서 리뷰들이 전부 작성 되어있는 url로 이동하는 것이다.
+    - 만들지 않게 된다면 리뷰를 보려면 해당 영화의 Card에서만 볼 수 있다. 
+      - 이 경우에는 선택지가 2가지가 있는데 리뷰 작성하기를 해당 영화의 Card 안에서만 가능한 것과 밖에서도 작성하기 칸은 만들어 두는 것
+  - 만들게 된다면 MovieSerializer가 있으면 좋지 않을까?(id와 title만 들어있는) -> 어떤 것에 대한 리뷰인지 알려주기 위해
+
+  - 리뷰를 작성할 때 영화를 선택해서 작성하게 할 것인가. 이렇게 하면 save()
+  - 아니면 리뷰 작성하기로 들어갈 때 영화데이터를 넘겨줘서 이 부분은 작성안해도 이전에 페이지에 있던 영화가 설정되도록 할 것인가. 이렇게 하면 save(movie=movie.id)
+
+  ##### :question: 궁금한 점
+
+  - 만약에 ReviewSerializer에 있는 movie를 가져왔을 때 id값만 가져오는데 여기서 id값에 해당하는 title을 가져올 수 있는지 ? →이게  된다면 굳이 MovieSerializer가 필요없음!
+
+#### :heavy_check_mark: 막혔던 부분 !
+
+- Django filter 사용 방법
+
+  - [django filter](https://docs.djangoproject.com/en/3.2/topics/db/queries/#retrieving-specific-objects-with-filters)
+
+  ```python
+  @api_view(['GET'])
+  def review_list(request):
+      reviews = get_list_or_404(Review)
+      serializer = ReviewListSerializer(reviews, many=True)
+      return Response(serializer.data)
+  
+  
+  @api_view(['GET'])
+  def moviereview_list(request, movie_pk):
+      reviews = Review.objects.filter(movie=movie_pk)
+  		# filter를 사용했을 때 한개만 가져올지 전부를 가져올지, 이렇게 써도 되는지
+  		# -> filter를 사용했을 때 list에서 movie_pk인 것을 전부 가져온다.
+      serializer = ReviewListSerializer(reviews, many=True)
+      return Response(serializer.data)
+  ```
+
+<br>
+
+### 6. Postman 이용해서 Test
+
+- 아직 Front 부분이 만들어지지 않았기 때문에 각자 맡았던 부분을 Postman을 통해서 정상적으로 돌아가는지 확인했다.
+
+  :heavy_check_mark: data를 넣어줄 때는 form-data로 ! !
+
+- 아직 로그인한 user를 가져올 수 없기 때문에 직접 넣어주어야하는 상황이 발생했고 read_only_filed에 있는 유저를 다시 field로 넣어서 해결했다.
+
+  :heavy_check_mark: read_only_filed에 user가 있으면 user를 넣어서 요청 시 오류가 발생한다!
+
+- 만들어진 12개의 url을 테스트했고 성공했다 :happy:
+
+  - **accounts :** signup, getToken
+  - **review :** create, detail, update, delete, all_list, movie_list
+  - **community :** create, update, delete, list
+
+<br>
+
+#### :orange: 오늘 한 것
+
+1. **UI 수정**
+2. **ERD 작성**
+3. **movies.json 받아오기**
+4. **Accounts - Signup, api-Token**
+5. **Community - Review, comment**
+6. **Postman으로 정상 동작 확인**
+
+<br>
+
+#### :watermelon: 내일 할 일
+
+1. **Login - vue**
+2. **Logout -vue**
+3. **사용자 인증(jwt)**
+4. **Movie Home css**
+
+<br>
+
+#### :apple: 느낀 점
+
+- 처음하는 프로젝트여서 생각이 많았던 것 같다. 그동안 공부했던 것을 활용하여 하는 프로젝티인 만큼 기본 기능을 완성하고 추가적으로 여러가지 해보고 싶다는 생각을 많이 한 것 같다. 물론! 내가 열심히 해야겠지만😅
+- 팀원과 함께 진행한다는 것이 든든했다. 모르는 부분을 물어볼 수 있고 내 눈에 보이지 않는 오타나 에러를 찾아주면서 디버깅도 빠르게 진행됐다👍 둘 다 모르는 부분은 서로 찾아보면서 해결할 수 있다는 점까지 팀 프로젝트의 장점을 느낄 수 있었다 !
+- 아직 많은 지식이 없다보니 내가 구현할 수 있는지, 내 방법이 맞는지 등에 대한 확신이 없다. 정해진 시간 안에 각자의 역할을 진행하다보니 일단 완성 후 도전하기로 했다. 빠르게 완성하고 얼른 추가적인 기능을 구현하고 싶다😀😀 많이 만져볼수록 배울 수 있으니까!
+
+- 내일도 열심히 해서 목표한 일보다 빠르게(+정확하게) 진행해보자 !!
+
+<br>
+
+<br>
 
