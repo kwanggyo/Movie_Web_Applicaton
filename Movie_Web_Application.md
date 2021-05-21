@@ -359,3 +359,216 @@
 
 <br>
 
+# `05.21`
+
+## 오늘 목표
+
+#### 1. Login.vue
+
+#### 2. Logout.vue
+
+#### 3. 사용자 권한 인증
+
+#### 4. MovieList.vue
+
+#### 5. MovieCards.vue
+
+<br>
+
+### 1. Login, Logout, 사용자 권한 인증
+
+- 재우님이 맡아서 구현했다.
+
+### 2. MovieList.vue
+
+- 기본적으로 데이터를 받아오는 것은 성공했지만 Carousel을 넣는 것은 실패했다..
+
+- 우리가 원하는 Carousel은 5개 정도의 영화 포스터가 보이가 좌우로 움직이면 한칸씩 이동하는 식이었는데 하나의 포스터에서만 움직일 수 있었다. 오래걸릴 것 같았기 때문에 일단 기본 데이터들만 받기로 하고 css는 마지막에 하기로 했다.(다음주의 우리에게 Toss--!)
+
+  ##### 😮 토의 내용
+
+  - 5개 정도가 보여지는 Carousel로 영화를 받으려고 했지만 쉽지 않다.
+  - 일단 데이터만 받아놓고 마지막에 css를 몰아서 하는 것이 어떤지?
+
+  → 필요한 데이터를 받아 놓는 작업만 하고 기본 구조 완성 후, 추가하는 방식으로
+
+- 받아와야 하는 데이터
+
+  - 가운데에 있는 영화 포스터 → Random
+  - 최신 영화 → 개봉일 기준 10개
+  - 위시 리스트 → 나중에 찜하기를 구현하고 !
+  - 전체 영화 → list 전부를 받아온다.
+
+- 결과
+
+  ![image-20210521233247501](Movie_Web_Application.assets/image-20210521233247501.png)
+
+### 3. Review
+
+- Accounts 부분이 빨리 끝나서 Movie를 같이 하려고 했지만 그것 보다는 Review와 Movie를 나눠서 진행하는 것이 좋다고 생각되어 각각 맡아서 진행했다.
+
+- MovieList 부분을 끝내고 MovieDetail 부분을 할 예정이었으나 Review에서 Data를 넘겨줄 때 user_id 값을 어떻게 넘겨줄지에 대한 문제가 발생해서 같이 해결해보았다.
+
+  ##### 😮 토의 내용
+
+  - review를 작성하는데 user와 movie data가 필요하다. 이 때 user의 정보를 넘겨주려고 하는데 정보를 가져올 수 없는 문제 발생
+
+  :bulb: 해결 아이디어
+
+  1. user가 로그인 할 때 console.log(response)를 해보면 `{"username": "username", "password": "password"}` 부분이 있다. 여기서 username을 가져오고 이 user와 맞는 user_id 값을 django에서 받아오고 그 id값을 다시 넣어준다.
+
+     → 이렇게 복잡하지는 않을 것 같지만 이 방법도 가능하지 않을까?
+
+  2. user를 ForeignKey로 참조할때 user_id가 아닌 username field를 FK로 사용하면 가능하지 않을까?
+
+     - 결과
+
+       `unique=True`와 `to_field="username"`을 ForeginKey에 적어줬지만 review 작성에 user는 필수 항목 입니다 or User의 instance여야 한다는 에러 발생
+
+       primary_key=True를 넣어 줘야 한다는 것 같은데 User의 username에 넣어야하는 것 같다. 이를 위해서는 AbstractUser를 보고 커스텀이 필요할 것으로 보인다.(아마두?🙄)
+
+  :heavy_check_mark: 해결 했던 방법
+
+  - jwt 토큰 안에는 유저 정보가 들어가 있다. 이 정보를 headers에 넘겨주면 request안에 들어가 있고 이를 통해 user_id 값을 넣어준다.
+
+  - 아래에 보면 request.data에는 user의 정보가 없다 때문에 serializers에는 read_only_field에 user를 넣어주고 인증을 통과하게 한 후 request.user에 있는 user 정보를 넣어준다.
+
+    - django
+
+    ```python
+    @api_view(['POST'])
+    @authentication_classes([JSONWebTokenAuthentication])
+    @permission_classes([IsAuthenticated])
+    def review_create(request):
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    ```
+
+    - vue
+
+    ```vue
+    methods: {
+        setToken: function () {
+          const token = localStorage.getItem('jwt')
+          const config = {
+            Authorization: `JWT ${token}`
+          }
+          return config
+        },
+        createReview: function () {
+          const reviewItem = {
+            title: this.title,
+            content: this.content,
+            rank: this.rank,
+            movie: this.movie,
+          }
+    
+          if (reviewItem.title) {
+            axios({
+              method: 'POST',
+              url: 'http://127.0.0.1:8000/community/review/create/',
+              data: reviewItem,
+              headers: this.setToken()
+            })
+              .then((res) => {
+                console.log(res)
+                this.$router.push({ name: 'Review' })
+              })
+              .catch((err) => {
+                console.log(err)
+              })
+            }
+        },
+        
+      }
+    }
+    ```
+
+<br>
+
+### :weary: 에러 발생
+
+- 무슨 이유 때문인지 모르겠다. 그나마 추측하는 거로는 master에서 한 작업이 있어서 gitlab에 올리지 않고 폴더 전체를 삭제하고 받았다는 것..?
+
+- 이전에도 이러한 작업을 했는데 갑자기 오늘 에러가 발생했다.
+
+  - 에러 내용
+
+    ```shell
+    App running at:
+      - Local:   http://localhost:8080/
+      - Network: http://192.168.0.26:8080/
+    
+      Note that the development build is not optimized.
+      To create a production build, run npm run build.
+    
+    C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\watchpack\lib\chokidar.js:17
+    throw new Error(
+    ^
+    
+    Error: No version of chokidar is available. Tried chokidar@2 and chokidar@3.
+    You could try to manually install any chokidar version.
+    chokidar@3: Error: Cannot find module 'chokidar'
+    Require stack:
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\watchpack\lib\chokidar.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\watchpack\lib\DirectoryWatcher.js        
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\watchpack\lib\watcherManager.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\watchpack\lib\watchpack.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\webpack\lib\node\NodeWatchFileSystem.js  
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\webpack\lib\node\NodeEnvironmentPlugin.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\webpack\lib\webpack.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\@vue\cli-service\lib\commands\serve.js   
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\@vue\cli-service\lib\Service.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\@vue\cli-service\bin\vue-cli-service.js  
+    chokidar@2: Error: Cannot find module 'watchpack-chokidar2'
+    Require stack:
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\watchpack\lib\chokidar.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\watchpack\lib\DirectoryWatcher.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\watchpack\lib\watcherManager.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\watchpack\lib\watchpack.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\webpack\lib\node\NodeWatchFileSystem.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\webpack\lib\node\NodeEnvironmentPlugin.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\webpack\lib\webpack.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\@vue\cli-service\lib\commands\serve.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\@vue\cli-service\lib\Service.js
+    - C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\@vue\cli-service\bin\vue-cli-service.js
+    
+        at Object.<anonymous> (C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\watchpack\lib\chokidar.js:17:7)
+        at Module._compile (internal/modules/cjs/loader.js:1063:30)
+        at Object.Module._extensions..js (internal/modules/cjs/loader.js:1092:10)
+        at Module.load (internal/modules/cjs/loader.js:928:32)
+        at Function.Module._load (internal/modules/cjs/loader.js:769:14)
+        at Module.require (internal/modules/cjs/loader.js:952:19)
+        at require (internal/modules/cjs/helpers.js:88:18)
+        at Object.<anonymous> (C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\watchpack\lib\DirectoryWatcher.js:9:16)
+        at Module._compile (internal/modules/cjs/loader.js:1063:30)
+        at Object.Module._extensions..js (internal/modules/cjs/loader.js:1092:10)
+        at Module.load (internal/modules/cjs/loader.js:928:32)
+        at Function.Module._load (internal/modules/cjs/loader.js:769:14)
+        at Module.require (internal/modules/cjs/loader.js:952:19)
+        at require (internal/modules/cjs/helpers.js:88:18)
+        at WatcherManager.getDirectoryWatcher (C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\watchpack\lib\watcherManager.js:14:25)
+        at WatcherManager.watchFile (C:\Users\LEEKWANGGYO\Desktop\final_client\client\node_modules\watchpack\lib\watcherManager.js:28:14)
+    ```
+
+- 어떤 모듈들이 없어서 안된다는 것 같은데 다행히 재우님이 찾아주신 방법으로 해결이 되었다!! 감사합니다​​🙌
+
+  :heavy_check_mark: 아래의 코드를 순서대로 작성하면 해결 !
+
+  	1. npm i -g npm 
+   	2. npm update 
+   	3. npm cache verify 
+   	4. npm i -D chokidar 
+   	5. npm i
+
+<br>
+
+#### :apple: 느낀 점
+
+- 비몽사몽한게 조금 오래가서 오전에 집중을 잘 못한 것 같다. 죄송합니다:sob:
+
+- 어제는 오전에 생각했던 부분을 다 구현하고 오후로 넘어가면서 편하게 할 수 있었는데 오늘은 오전에 Carousel에서 막히면서 시간을 많이 사용했고 점심 먹기전에는 client가 run serve가 안되는 문제가 발생했다. 왜 그랬는지는 아직도 모르겠다..
+- 계획을 약간 변경해가면서 시도했고 저녁에 추가적으로 구현한 시간이 있지만 나쁘지 않은 선택이었다. css 부분에서 찾아봐야할게 많아 보여서 한번에 하기로 했고 필요한 데이터를 받아오는 것에는 성공해서 다행이었다.
+
