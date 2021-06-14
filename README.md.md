@@ -47,7 +47,7 @@
 
 - 아래의 에러메세지가 나온다.
 
-  ![image-20210518231941531](Movie_Web_Application.assets/image-20210518231941531.png)
+  ![image-20210518231941531](README.assets/image-20210518231941531.png)
 
   → 같은 부분을 수정했기 때문에 둘 중 어떤 것을 사용할지 정해야 한다.
 
@@ -113,9 +113,9 @@
 
 - 그림으로 표현해보았다 !
 
-  | ![UI_1_0519](Movie_Web_Application.assets/UI_1_0519.jpg) | ![UI_2_0519](Movie_Web_Application.assets/UI_2_0519.jpg) |
-  | -------------------------------------------------------- | -------------------------------------------------------- |
-  | ![UI_3_0519](Movie_Web_Application.assets/UI_3_0519.jpg) | ![UI_4_0519](Movie_Web_Application.assets/UI_4_0519.jpg) |
+  | ![UI_1_0519](README.assets/UI_1_0519.jpg) | ![UI_2_0519](README.assets/UI_2_0519.jpg) |
+  | ----------------------------------------- | ----------------------------------------- |
+  | ![UI_3_0519](README.assets/UI_3_0519.jpg) | ![UI_4_0519](README.assets/UI_4_0519.jpg) |
 
 - 메인페이지를 Carousel과 Progress, Card를 통해서 표현해보았다.
 
@@ -147,7 +147,7 @@
 
 - 아직 명세가 나오지 않았지만 전체적인 ERD를 생각해보았다.
 
-  ![0519_meeting](Movie_Web_Application.assets/0519_meeting.PNG)
+  ![0519_meeting](README.assets/0519_meeting.PNG)
 
 - User와 Review, Review와 Comment(만들게 된다면)는 1: N 관계로 진행할 것이고 User와 follow는 M : N 관계로 할 것이다.(프로필을 만들 것이기 때문에)
 - 둘 다 고민을 한 부분이 찜하기 부분이었는데 Movie Data를 Django DB에 받아와서 할 것인지, Local에 저장할 것인지에 대한 고민이었다.
@@ -159,7 +159,7 @@
 ### 3. TMDB DATA 받기
 
 - DB로 구현하기로 했기 때문에 data를 잘 받아올 수 있는지 테스트 해보았다. POSTMAN을 이용했고 TMDB의 api_key를 이용해서 받아왔다. popular 데이터를 보니 약 30개 정도로 돼보였는데 더 많은 데이터를 가져오는 url를 발견하지 못했다. 아마도 내일 알려주지 않을까? 싶다.
-- ![image-20210519190801971](Movie_Web_Application.assets/image-20210519190801971.png)
+- ![image-20210519190801971](README.assets/image-20210519190801971.png)
 
 #### **오늘은 여기까지 !** 내일부터 본격적인 시작 화이팅~~!
 
@@ -220,11 +220,11 @@
 
 - UI를 그리는 작업은 미리그려본 UI를 사용했다. 명세를 보면서 꼭 필요한 기능을 먼저 구현하기로 했고 이 후에 추가적인 기능을 붙이기로 했다. 
 
-| ![image-20210520233609454](Movie_Web_Application.assets/image-20210520233609454.png) | ![image-20210520233630211](Movie_Web_Application.assets/image-20210520233630211.png) |
+| ![image-20210520233609454](README.assets/image-20210520233609454.png) | ![image-20210520233630211](README.assets/image-20210520233630211.png) |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![image-20210520233651904](Movie_Web_Application.assets/image-20210520233651904.png) | ![image-20210520233743123](Movie_Web_Application.assets/image-20210520233743123.png) |
-| ![image-20210520233817291](Movie_Web_Application.assets/image-20210520233817291.png) | ![image-20210520233833533](Movie_Web_Application.assets/image-20210520233833533.png) |
-| ![image-20210520233903404](Movie_Web_Application.assets/image-20210520233903404.png) | ![image-20210520233916230](Movie_Web_Application.assets/image-20210520233916230.png) |
+| ![image-20210520233651904](README.assets/image-20210520233651904.png) | ![image-20210520233743123](README.assets/image-20210520233743123.png) |
+| ![image-20210520233817291](README.assets/image-20210520233817291.png) | ![image-20210520233833533](README.assets/image-20210520233833533.png) |
+| ![image-20210520233903404](README.assets/image-20210520233903404.png) | ![image-20210520233916230](README.assets/image-20210520233916230.png) |
 
 - 처음에 작성한 부분에서 토의를 통해 약간 수정된 부분도 반영하였다.
 - Tip 2번의 글처럼 먼저 API를 통해서 가져와야 하는 부분들을 검은색 창으로 적어두었다.
@@ -233,7 +233,7 @@
 
 ### 2. ERD 구성
 
-![image-20210520234522874](Movie_Web_Application.assets/image-20210520234522874.png)
+![image-20210520234522874](README.assets/image-20210520234522874.png)
 
 - user와 review 1:N,  review와 comment 1:N 관계를 설정했다.
 - user와 movie는 M:N 관계를 설정했고 중간에 찜하기를 하기 위한 movie_like를 넣었는데 이부분은 확실하지 않아서 바뀔 수도 있을 것 같다.
@@ -405,7 +405,7 @@
 
 - 결과
 
-  ![image-20210521233247501](Movie_Web_Application.assets/image-20210521233247501.png)
+  ![image-20210521233247501](README.assets/image-20210521233247501.png)
 
 <br>
 
@@ -596,7 +596,7 @@
 
 - 결과
 
-  ![image-20210602162822359](Movie_Web_Application.assets/image-20210602162822359.png)
+  ![image-20210602162822359](README.assets/image-20210602162822359.png)
 
 <br>
 
@@ -813,7 +813,7 @@
 
   | Login                                                        | SignUp                                                       |
   | ------------------------------------------------------------ | ------------------------------------------------------------ |
-  | ![image-20210614143826321](Movie_Web_Application.assets/image-20210614143826321.png) | ![image-20210614143943380](Movie_Web_Application.assets/image-20210614143943380.png) |
+  | ![image-20210614143826321](README.assets/image-20210614143826321.png) | ![image-20210614143943380](README.assets/image-20210614143943380.png) |
 
   ```css
   .idForm{
@@ -1231,7 +1231,7 @@
 
 | Login                                                        | SignUp                                                       |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![image-20210614143826321](Movie_Web_Application.assets/image-20210614143826321.png) | ![image-20210614143943380](Movie_Web_Application.assets/image-20210614143943380.png) |
+| ![image-20210614143826321](README.assets/image-20210614143826321.png) | ![image-20210614143943380](README.assets/image-20210614143943380.png) |
 
 ##### - Review
 
@@ -1246,17 +1246,17 @@
 - [x] 자동완성 클릭하면 반영
 - [x] 댓글 창 작성자 추가, 삭제버튼 줄이기
 
-![image-20210614172103430](Movie_Web_Application.assets/image-20210614172103430.png)
+![image-20210614172103430](README.assets/image-20210614172103430.png)
 
-![image-20210614172146746](Movie_Web_Application.assets/image-20210614172146746.png)
+![image-20210614172146746](README.assets/image-20210614172146746.png)
 
-![image-20210614172255760](Movie_Web_Application.assets/image-20210614172255760.png)
+![image-20210614172255760](README.assets/image-20210614172255760.png)
 
 ##### - 데이터
 
 - [x] TMDB DATA로 바꾸기
 
-![image-20210614172435830](Movie_Web_Application.assets/image-20210614172435830.png)
+![image-20210614172435830](README.assets/image-20210614172435830.png)
 
 ##### - MovieList
 
@@ -1270,9 +1270,9 @@
   - [x] 태그 단위로 변형 시도
   - [x] ex) 고딕류의 폰트, 구글폰트 노트산스, font weight 조정
 
-![image-20210614172817512](Movie_Web_Application.assets/image-20210614172817512.png)
+![image-20210614172817512](README.assets/image-20210614172817512.png)
 
-![image-20210614172841462](Movie_Web_Application.assets/image-20210614172841462.png)
+![image-20210614172841462](README.assets/image-20210614172841462.png)
 
 ##### - MovieDetail
 
@@ -1280,7 +1280,7 @@
 - [x] 모달 창 크기 키우기
 - [ ] 찜하기 버튼 → 화면 중간에 떴다가 사라지게?
 
-![image-20210614173001329](Movie_Web_Application.assets/image-20210614173001329.png)
+![image-20210614173001329](README.assets/image-20210614173001329.png)
 
 ##### - Recommend
 
@@ -1288,7 +1288,7 @@
 - [x] 글이 잘 보이려면 뒤에 투명 영역이 있어야함
 - [x] 제목 키우고 내용 크기는 그에 맞게
 
-![image-20210614173103003](Movie_Web_Application.assets/image-20210614173103003.png)
+![image-20210614173103003](README.assets/image-20210614173103003.png)
 
 - 전체적인 피드백을 받았고 무조건 받아들이는 것이 아닌, 토의하며 선택적으로 받아들이면서 수정해갔다.
 - 주로 통일감을 주고 색과 효과가 잘 보일 수 있도록 바꾸었다.
@@ -1375,7 +1375,7 @@
 
 ### 4. PPT 제작
 
-![image-20210614174203903](Movie_Web_Application.assets/image-20210614174203903.png)
+![image-20210614174203903](README.assets/image-20210614174203903.png)
 
 **...**
 
@@ -1383,7 +1383,7 @@
 
 ### 5. README 작성
 
-![image-20210614174433060](Movie_Web_Application.assets/image-20210614174433060.png)
+![image-20210614174433060](README.assets/image-20210614174433060.png)
 
 ​	**...**
 
